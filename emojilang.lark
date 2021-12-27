@@ -1,10 +1,12 @@
-stmt: simple_stmt | compound_stmt
+stmt: (_simple_stmt | _compound_stmt)* NEWLINE
 
-simple_stmt: small_stmt NEWLINE
+_simple_stmt: _small_stmt
 
-small_stmt: assignment_stmt | flow_stmt | print_stmt
+_small_stmt: assignment_stmt | flow_stmt | print_stmt | declare_stmt
 
-assignment_stmt: name "=" exp
+assignment_stmt: name "=" (exp | test)
+
+declare_stmt: "decl" (_multipleassignment_stmt | name) ("," (_multipleassignment_stmt | name))*
 
 flow_stmt: break_stmt | continue_stmt
 
@@ -14,25 +16,25 @@ continue_stmt: "continue"
 
 print_stmt: "print" "(" (ESCAPED_STRING | exp) ")" 
 
-compound_stmt: if_stmt | while_stmt | for_stmt
+_compound_stmt: if_stmt | while_stmt | for_stmt
 
-if_stmt: "if" "(" test ")" "{" suite "}" ("elif" "(" test ")"  "{" suite "}")* ("else" "{" suite "}")?
+if_stmt: "if" "(" test ")" "{" _suite "}" ("elif" "(" test ")"  "{" _suite "}")* ("else" "{" _suite "}")?
 
-while_stmt: "while" "(" test ")" "{" suite "}"
+while_stmt: "while" "(" test ")" "{" _suite "}"
 
-for_stmt: "for" "(" assignment_stmt? ";" test? ";" multipleassignment_stmt? ")" "{" suite "}"
+for_stmt: "for" "(" (declare_stmt | assignment_stmt)? ";" test? ";" _multipleassignment_stmt? ")" "{" _suite "}"
 
-multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
+_multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
 
-suite: stmt*
+_suite: stmt*
 
-exp: multiplyexp (("+"|"-") multiplyexp)*
+exp: multiplyexp ((EPLUS|EMINUS) multiplyexp)*
 
-multiplyexp: _argument (("*"|"/") _argument)*
+multiplyexp: _argument ((EMULT|EDIVIDE) _argument)*
 
-test: exp (comp_op exp)*
+test: exp (_comp_op exp)*
 
-comp_op: "<" | ">" | "==" | ">=" | "<=" | "!="
+_comp_op: ELESS | EGREA | EEQU | EGREAE | ELESSE | ENOTEQ
 
 _argument: name|number|("(" exp ")")
 
@@ -47,4 +49,14 @@ name: /[a-zA-z_][a-zA-Z0-9_]*/
 %import common.NEWLINE
 %import common.ESCAPED_STRING
 number: SIGNED_NUMBER
+EPLUS: "+"
+EMINUS: "-"
+EMULT: "*"
+EDIVIDE: "/"
+ELESS: "<"
+EGREA: ">"
+EEQU: "=="
+EGREAE: ">="
+ELESSE: "<="
+ENOTEQ: "!="
 %ignore WS

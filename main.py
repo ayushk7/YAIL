@@ -1,7 +1,8 @@
-import lark
 import sys
+import lark
+# import sys
 
-
+from EmojiInterpreter import EmojiLangInterpeter
 
 
 
@@ -14,10 +15,14 @@ if __name__ == "__main__":
         sys.exit()
     parser = lark.Lark(file, start="stmt")
     text = '''
-        for (a=2; a <5; a=a+1){
-            print("hi")
-        }
+        a=3
+           b=4
+           c=a+b
+    
     '''
-    text += '\n'
+    # text += '\n'
     tree = parser.parse(text)
     print(tree.pretty())
+    i = EmojiLangInterpeter(tree)
+    i.start()
+    # a = 1
