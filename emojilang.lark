@@ -18,15 +18,21 @@ print_stmt: "print" "(" (ESCAPED_STRING | exp) ")"
 
 _compound_stmt: if_stmt | while_stmt | for_stmt
 
-if_stmt: "if" "(" test ")" "{" _suite "}" ("elif" "(" test ")"  "{" _suite "}")* ("else" "{" _suite "}")?
+if_stmt: EIF "(" test ")" "{" suite "}" (EELIF "(" test ")"  "{" suite "}")* (EELSE "{" suite "}")?
 
-while_stmt: "while" "(" test ")" "{" _suite "}"
+while_stmt: "while" "(" for_test ")" "{" suite "}"
 
-for_stmt: "for" "(" (declare_stmt | assignment_stmt)? ";" test? ";" _multipleassignment_stmt? ")" "{" _suite "}"
+for_stmt: "for" "(" for_decl ";" for_test";" for_updates ")" "{" suite "}"
+
+for_decl: (declare_stmt | assignment_stmt)?
+
+for_test: test?
+
+for_updates: _multipleassignment_stmt?
 
 _multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
 
-_suite: stmt*
+suite: (_simple_stmt | _compound_stmt)* NEWLINE
 
 exp: multiplyexp ((EPLUS|EMINUS) multiplyexp)*
 
@@ -49,6 +55,9 @@ name: /[a-zA-z_][a-zA-Z0-9_]*/
 %import common.NEWLINE
 %import common.ESCAPED_STRING
 number: SIGNED_NUMBER
+EIF: "if"
+EELIF: "elif"
+EELSE: "else"
 EPLUS: "+"
 EMINUS: "-"
 EMULT: "*"

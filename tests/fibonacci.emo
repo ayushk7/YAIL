@@ -1,0 +1,9 @@
+decl f0 = 0, f1 = 1
+decl i = 0
+while(i < 10){
+    print(f0)
+    decl tmp = f0
+    f0 = f1
+    f1 = f1 + tmp
+    i = i + 1
+}

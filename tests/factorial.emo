@@ -1,0 +1,5 @@
+decl ans = 1
+for(decl i = 1; i <= 10; i = i + 1){
+    ans = ans * i
+}
+print(ans)
