@@ -1,0 +1,50 @@
+stmt: simple_stmt | compound_stmt
+
+simple_stmt: small_stmt NEWLINE
+
+small_stmt: assignment_stmt | flow_stmt | print_stmt
+
+assignment_stmt: name "=" exp
+
+flow_stmt: break_stmt | continue_stmt
+
+break_stmt: "break"
+
+continue_stmt: "continue"
+
+print_stmt: "print" "(" (ESCAPED_STRING | exp) ")" 
+
+compound_stmt: if_stmt | while_stmt | for_stmt
+
+if_stmt: "if" "(" test ")" "{" suite "}" ("elif" "(" test ")"  "{" suite "}")* ("else" "{" suite "}")?
+
+while_stmt: "while" "(" test ")" "{" suite "}"
+
+for_stmt: "for" "(" assignment_stmt? ";" test? ";" multipleassignment_stmt? ")" "{" suite "}"
+
+multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
+
+suite: stmt*
+
+exp: multiplyexp (("+"|"-") multiplyexp)*
+
+multiplyexp: _argument (("*"|"/") _argument)*
+
+test: exp (comp_op exp)*
+
+comp_op: "<" | ">" | "==" | ">=" | "<=" | "!="
+
+_argument: name|number|("(" exp ")")
+
+
+
+
+
+
+name: /[a-zA-z_][a-zA-Z0-9_]*/
+%import common.SIGNED_NUMBER
+%import common.WS
+%import common.NEWLINE
+%import common.ESCAPED_STRING
+number: SIGNED_NUMBER
+%ignore WS
