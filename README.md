@@ -21,46 +21,59 @@ pip install -r requirements.txt
 #### Flow Control
 ````
     while(a <= 5*b){
-        //statements
+        #this is how you use comments
+        #statements
     }
     while(){
-        //infinite looop
+        #infinite looop
     }
     for(decl i=0, j=7, k; i < a*5; i = i+1, b=b*(28 +)){
-        //declared i, j, k and assigned values to i and j
-        //statements
+        #declared i, j, k and assigned values to i and j
+        #statements
     }
     for( ; ; ){
-        //all three statements can be skipped
+        #all three statements can be skipped
     }
     if(a == 5){
-        //statements
+        #statements
     }
     elif(a<5){
-        //statements
+        #statements
     }
-    elif(a>5){
-        //statements
+    elif(a>5 || a&b|c){
+        #statements
+        #it supports 
+        #BITWISE OPERATORS
+        #bitwise and        :  &
+        #bitwise or         :  |
+        #bitwise xor        : ^, xor
+        #bitwise complement : ~
+        
+        #LOGICAL OPERATORS
+        #logical and : and, &&
+        #logical or  : or, ||
+        #logical not : not, !
+        #logical xor : xor, ^
+
 
     }
     else{
-        //statements
-    }
+        #statements
+    }k
 
 ````
 
 ### Invalid Syntaxes
 ````
-    //Invalid
+    #INVALID
     if(a==5)
         print(a)
     
-    
-    //Valid
+    #VALID
     if(a==5){
         print(a)
     }
     
 
-    /similarly for other blocks like for and while
+    #similarly for other blocks like for and while
 ````
