@@ -34,13 +34,23 @@ _multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
 
 suite: (_simple_stmt | _compound_stmt)* NEWLINE
 
-exp: multiplyexp ((EPLUS|EMINUS) multiplyexp)*
+exp: multiplyexp ((EPLUS|EMINUS) multiplyexp)*|logicalexp ((EAND|EOR|EXOR) logicalexp)*
 
-multiplyexp: _argument ((EMULT|EDIVIDE) _argument)*
+multiplyexp: _argument ((EMULT|EDIVIDE|EMOD) _argument)*
+
+logicalexp: _argument ((EAND|EOR|EXOR) _argument)*|ENOT _argument
+
+
 
 test: exp (_comp_op exp)*
 
 _comp_op: ELESS | EGREA | EEQU | EGREAE | ELESSE | ENOTEQ
+
+_log_op: EAND | EOR | EXOR | ENOT | EIN | ENOTIN 
+
+_modulo_op: EMOD
+
+
 
 _argument: name|number|("(" exp ")")
 
@@ -64,8 +74,18 @@ EMULT: "*"
 EDIVIDE: "/"
 ELESS: "<"
 EGREA: ">"
-EEQU: "=="
+EEQU: "=="|"is"
 EGREAE: ">="
 ELESSE: "<="
-ENOTEQ: "!="
+ENOTEQ: "!="|"is not"
+
+EAND: "and"|"&&"
+EOR: "or"|"||"
+EXOR: "xor"|"^"
+ENOT: "not"|"!"
+EIN: "in"|"<-"
+ENOTIN: "not in"|"<->"
+EMOD: "%"| "mod"
+
+
 %ignore WS

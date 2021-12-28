@@ -31,7 +31,7 @@ if __name__ == "__main__":
         tree = None
         tree = parser.parse(text)
         print(f"STATUS:{filName} Parsed Successfully")
-        # print(tree.pretty())
+        print(tree.pretty())
         runner = EmojiLangInterpeter(tree)
         runner.start()
         print(f"STATUS:{filName} ran without any interrupt")
