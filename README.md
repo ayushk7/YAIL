@@ -7,16 +7,49 @@ pip install -r requirements.txt
 ```
 
 ### Current Syntax
+
+#### Operators
+|Operation | Symbol|
+|---------|-----|
+|unary not|not<br>!|
+|unary complement|~|
+|bitwise and|        &|
+|bitwise or|  \| |
+|bitwise xor| ^<br> xor
+|bitwise complement | ~
+|logical and | and <br> &&
+|logical or  | or <br> \|\| |
+|logical not | not <br> !
+|logical xor | xor <br> ^|
+
+#### Operators Precedence
+<mark>Operators With Highest Priority On Top</mark><br>
+|Description|Operators|
+|----|-----|
+|unary oprators|not, !, ~ |
+|arithmatic|*, /, %|
+|arithmatic|+, -|
+|comparison|==, !=, <=, <, >, => <br><mark>*Python's Precedence</mark>|
+|bitwise and|&|
+|bitwise xor|^, xor|
+|bitwise or|\||
+|logical and|and, &&|
+|logical or|or, \|\||
+
+
 #### Variable Declaration
+
 ````
     decl a
     decl b=5, c, d=6
     decl e=5+c*4
+    decl t = true, f
 ````
 #### Assignments
 ````
     a = 3
     b = (c*4)+5 / d
+    f = false
 ````
 #### Flow Control
 ````
@@ -34,6 +67,9 @@ pip install -r requirements.txt
     for( ; ; ){
         #all three statements can be skipped
     }
+````
+#### Branching
+````
     if(a == 5){
         #statements
     }
@@ -42,25 +78,10 @@ pip install -r requirements.txt
     }
     elif(a>5 || a&b|c){
         #statements
-        #it supports 
-        #BITWISE OPERATORS
-        #bitwise and        :  &
-        #bitwise or         :  |
-        #bitwise xor        : ^, xor
-        #bitwise complement : ~
-        
-        #LOGICAL OPERATORS
-        #logical and : and, &&
-        #logical or  : or, ||
-        #logical not : not, !
-        #logical xor : xor, ^
-
-
     }
     else{
         #statements
     }
-
 ````
 
 ### Invalid Syntaxes
