@@ -34,29 +34,26 @@ _multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
 
 suite: (_simple_stmt | _compound_stmt)* NEWLINE
 
-exp: multiplyexp ((EPLUS|EMINUS) multiplyexp)*|logicalexp ((EAND|EOR|EXOR) logicalexp)*
+exp: (multiplyexp|logicalexpr) ((EMULT|EDIVIDE|EMOD) (multiplyexp|logicalexpr))*
 
-multiplyexp: _argument ((EMULT|EDIVIDE|EMOD) _argument)*
+multiplyexp: (_argument|logicalexpr) ((EPLUS|EMINUS) (_argument|logicalexpr))*
 
-logicalexp: _argument ((EAND|EOR|EXOR) _argument)*|ENOT _argument
+logicalexpr: logicalexpr binarylogicalop logicalexpr 
+              | unarylogicalop logicalexpr
+              | "(" logicalexpr ")"|exp
 
+binarylogicalop: EAND|EOR
+
+unarylogicalop: ENOT
 
 
 test: exp (_comp_op exp)*
 
 _comp_op: ELESS | EGREA | EEQU | EGREAE | ELESSE | ENOTEQ
 
-_log_op: EAND | EOR | EXOR | ENOT | EIN | ENOTIN 
-
 _modulo_op: EMOD
 
-
-
 _argument: name|number|("(" exp ")")
-
-
-
-
 
 
 name: /[a-zA-z_][a-zA-Z0-9_]*/
