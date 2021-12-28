@@ -4,7 +4,7 @@ _simple_stmt: _small_stmt
 
 _small_stmt: assignment_stmt | flow_stmt | print_stmt | declare_stmt
 
-assignment_stmt: name "=" (exp | test)
+assignment_stmt: name "=" exp
 
 declare_stmt: "decl" (_multipleassignment_stmt | name) ("," (_multipleassignment_stmt | name))*
 
@@ -18,7 +18,7 @@ print_stmt: "print" "(" (ESCAPED_STRING | exp) ")"
 
 _compound_stmt: if_stmt | while_stmt | for_stmt
 
-if_stmt: EIF "(" test ")" "{" suite "}" (EELIF "(" test ")"  "{" suite "}")* (EELSE "{" suite "}")?
+if_stmt: EIF "(" exp ")" "{" suite "}" (EELIF "(" exp ")"  "{" suite "}")* (EELSE "{" suite "}")?
 
 while_stmt: "while" "(" for_test ")" "{" suite "}"
 
@@ -26,7 +26,7 @@ for_stmt: "for" "(" for_decl ";" for_test";" for_updates ")" "{" suite "}"
 
 for_decl: (declare_stmt | assignment_stmt)?
 
-for_test: test?
+for_test: exp?
 
 for_updates: _multipleassignment_stmt?
 
@@ -37,46 +37,45 @@ suite: (_simple_stmt | _compound_stmt)* NEWLINE
 
 
 
-castexpression: (unaryoperator?)_argument
+?castexpression: (_unaryoperator?)_argument
 
-multiplyexp: castexpression ((EMULT|EDIVIDE|EMOD) castexpression)*
+?multiplicativeexpression: castexpression ((EMULT|EDIVIDE|EMOD) castexpression)*
 
-additiveexpression: multiplyexp ((EPLUS|EMINUS) multiplyexp)*
+?additiveexpression: multiplicativeexpression ((EPLUS|EMINUS) multiplicativeexpression)*
 
-equalityexpression: additiveexpression ((EEQU|ENOTEQ) additiveexpression)*
+?equalityexpression: additiveexpression ((EEQU|ENOTEQ|ELESS|EGREA|EGREAE|ELESSE) additiveexpression)*
 
-andexpression: equalityexpression ((EAND) equalityexpression)*
+?andexpression: equalityexpression ((EAND) equalityexpression)*
 
-exclusiveorexpression: andexpression ((EXOR) andexpression)*
+?exclusiveorexpression: andexpression ((EXOR) andexpression)*
 
-inclusiveorexpression: exclusiveorexpression ((EOR) exclusiveorexpression)*
+?inclusiveorexpression: exclusiveorexpression ((EOR) exclusiveorexpression)*
 
-logicalandexpression: inclusiveorexpression ((ELAND) inclusiveorexpression)*
+?logicalandexpression: inclusiveorexpression ((ELAND) inclusiveorexpression)*
 
-logicalorexpression: logicalandexpression ((ELOR) logicalandexpression)*
+?logicalorexpression: logicalandexpression ((ELOR) logicalandexpression)*
 
 exp: logicalorexpression
 
-unaryoperator: (ENOT|ECOMPLEMENT)
 
 
 
 
-test: exp (_comp_op exp)*
 
-_comp_op: ELESS | EGREA | EEQU | EGREAE | ELESSE | ENOTEQ
+_unaryoperator: (ENOT|ECOMPLEMENT)
 
-_modulo_op: EMOD
+_argument: boolean | number | name|("(" exp ")")
 
-_argument: name|number|("(" exp ")")
-
-
+boolean: ETRUE | EFALSE
 name: /[a-zA-z_][a-zA-Z0-9_]*/
+
 %import common.SIGNED_NUMBER
 %import common.WS
 %import common.NEWLINE
 %import common.ESCAPED_STRING
 number: SIGNED_NUMBER
+ETRUE: "true"
+EFALSE: "false"
 EIF: "if"
 EELIF: "elif"
 EELSE: "else"
@@ -86,10 +85,10 @@ EMULT: "*"
 EDIVIDE: "/"
 ELESS: "<"
 EGREA: ">"
-EEQU: "=="|"is"
+EEQU: "=="
 EGREAE: ">="
 ELESSE: "<="
-ENOTEQ: "!="|"is not"
+ENOTEQ: "!="
 
 EAND: "&"
 EOR: "|"
@@ -101,6 +100,8 @@ EMOD: "%"| "mod"
 ELOR: "or"|"||"
 ELAND: "and"|"&&"
 ECOMPLEMENT: "~"
+COMMENT: "#" /[^\n]/*
 
 
 %ignore WS
+%ignore COMMENT

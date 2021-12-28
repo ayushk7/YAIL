@@ -17,8 +17,12 @@ if __name__ == "__main__":
     parser = lark.Lark(file, start="stmt")
     print("STATUS:Parser Generated Succesfully")
     print('-----------------------------------------------------------------------------')
-
     testFileNames = os.listdir('./tests')
+    
+    if len(sys.argv) > 1:
+        testFileNames = sys.argv[1:]
+        # print(sys.argv)
+    
     for filName in testFileNames:
         text = None
         try:
@@ -31,8 +35,8 @@ if __name__ == "__main__":
         tree = None
         tree = parser.parse(text)
         print(f"STATUS:{filName} Parsed Successfully")
-        print(tree.pretty())
-        # runner = EmojiLangInterpeter(tree)
-        # runner.start()
-        # print(f"STATUS:{filName} ran without any interrupt")
-        # print('-----------------------------------------------------------------------------')
+        # print(tree.pretty())
+        runner = EmojiLangInterpeter(tree)
+        runner.start()
+        print(f"STATUS:{filName} ran without any interrupt")
+        print('-----------------------------------------------------------------------------')

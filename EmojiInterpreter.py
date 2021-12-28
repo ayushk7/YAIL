@@ -18,7 +18,7 @@ class SymbolTable:
         self.table.append({})
 
     def addSymbol(self, symbol, value=None):
-        if(symbol in self.table[-1]):
+        if symbol in self.table[-1]:
             raise Exception(f"Redeclaration In Same Scope of '{symbol}'")
         self.table[-1][symbol] = value
 
@@ -58,22 +58,38 @@ class EmojiLangInterpeter(Interpreter):
         self.visit(self.parseTree)
 
     def stmt(self, tree):
-        # print(tree)
         self.visit_children(tree)
         
 
-    def assignment_stmt(self, tree):
-        self.visit_children(tree)
 
     def name(self, tree: Tree):
         # return 1
         return self.sTable.getValue(tree.children[0].value)
 
     def number(self, tree: Tree):
-        # print(tree.children[0].value)
-        return int(tree.children[0].value)
+        value = None
+        try:
+            value = int(tree.children[0].value)  # this raises exception if the the string represents the floating point value so it must be handled
+        except ValueError:
+            value = float(tree.children[0].value)
+        return value
 
-    def exp(self, tree: Tree):
+
+    def boolean(self, tree: Tree):
+        return tree.children[0] == "true"
+
+    def castexpression(self, tree: Tree):
+        if len(tree.children) == 1:
+            return self.visit(tree.children[0])
+        else: #the tree size is 2 and first child is the unarary operator
+            if tree.children[0] in ['!', 'not']:
+                return not self.visit(tree.children[1])
+            else: #it is '~'
+                return ~ self.visit(tree.children[1])
+
+
+
+    def additiveexpression(self, tree: Tree):
         value = self.visit(tree.children[0])
         for i in range(1, len(tree.children)):
             if tree.children[i] == '+':
@@ -82,24 +98,65 @@ class EmojiLangInterpeter(Interpreter):
                 value -= self.visit(tree.children[i+1])
         return value
 
-    def multiplyexp(self, tree: Tree):
+    def multiplicativeexpression(self, tree: Tree):
         value = self.visit(tree.children[0])
         for i in range(1, len(tree.children)):
             if tree.children[i] == '*':
                 value *= self.visit(tree.children[i+1])
             elif tree.children[i] == '/':
                 value /= self.visit(tree.children[i+1])
+            elif tree.children[i] in ['%', 'mod']:
+                value %= self.visit(tree.children[i+1])
         return value
 
-    def test(self, tree: Tree):
-        value = str(self.visit(tree.children[0]))
+    def equalityexpression(self, tree: Tree):
+        value = str(self.visit(tree.children[0]))+" "
         for i in range(1, len(tree.children)):
             if tree.children[i] in [">", "<", ">=", "<=", "==", "!="]:
-                value += tree.children[i]
+                value += tree.children[i] + " "
             else:
-                value += str(self.visit(tree.children[i]))
-        # print(eval(value))
+                value += str(self.visit(tree.children[i])) + " "
         return int(eval(value))
+
+    def andexpression(self, tree: Tree):
+        value = self.visit(tree.children[0])
+        for i in range(1, len(tree.children)):
+            if tree.children[i] == '&':
+                value &= self.visit(tree.children[i+1])
+        return value
+    
+    def exclusiveorexpression(self, tree: Tree):
+        value = self.visit(tree.children[0])
+        for i in range(1, len(tree.children)):
+            if tree.children[i] in ['^', 'xor']:
+                value ^= self.visit(tree.children[i+1])
+        return value
+    
+    def inclusiveorexpression(self, tree: Tree):
+        value = self.visit(tree.children[0])
+        for i in range(1, len(tree.children)):
+            if tree.children[i] == '|':
+                value |= self.visit(tree.children[i+1])
+        return value
+    
+    def logicalandexpression(self, tree: Tree):
+        value = self.visit(tree.children[0])
+        for i in range(1, len(tree.children)):
+            if tree.children[i] in ['&&', 'and']:
+                value = value and self.visit(tree.children[i+1])
+        return value
+    
+    def logicalorexpression(self, tree: Tree):
+        value = self.visit(tree.children[0])
+        for i in range(1, len(tree.children)):
+            if tree.children[i] in ['||', 'or']:
+                value = value or self.visit(tree.children[i+1])
+        return value
+    
+    def exp(self, tree: Tree):
+        return self.visit(tree.children[0])
+
+
 
     def print_stmt(self, tree: Tree):
         value = self.visit(tree.children[0])
@@ -119,7 +176,6 @@ class EmojiLangInterpeter(Interpreter):
         self.isAssignmentDeclaration = True
         for child in tree.children:
             if child.data == 'name':
-                # print(child.children[0].value)
                 self.sTable.addSymbol(child.children[0].value)
             else: # else this is the assignment_stmt
                 self.visit(child)
@@ -135,7 +191,6 @@ class EmojiLangInterpeter(Interpreter):
         return None
 
     def if_stmt(self, tree: Tree):
-        # print(tree.pretty())
         for i in range(0, len(tree.children)):
             if tree.children[i] in ['if', 'elif']:
                 cond = self.visit(tree.children[i+1])
@@ -143,7 +198,6 @@ class EmojiLangInterpeter(Interpreter):
                     self.sTable.addScope() #if-else, while, runs in thier scope
                     ret = self.visit(tree.children[i+2])
                     self.sTable.removeScope()
-                    # print(ret)
                     return ret
             elif tree.children[i] == 'else':
                 return self.visit(tree.children[i+1])
@@ -171,7 +225,6 @@ class EmojiLangInterpeter(Interpreter):
         # and the inner scope is for d, g, h
         # outer scope persists between loop iterationis 
         # whereas for every iteration the d, g, h are redeclared and their values doesn't persist
-        # print(tree.pretty())
         self.sTable.addScope() #outer scope
         self.visit(tree.children[0]) #visit for_declarations(for_decl)
         cond = self.visit(tree.children[1])
@@ -181,7 +234,7 @@ class EmojiLangInterpeter(Interpreter):
             ret = self.visit(tree.children[3]) # loop body
             self.sTable.removeScope()
             if ret == 'break': #just break this loop also
-                break           #also do nothing on the continue as the suit has alredy skipped the next statements and the loop will work as normal
+                break           #also do nothing on the continue as the suite has alredy skipped the next statements and the loop will work as normal
             self.visit(tree.children[2]) # update statement
             cond = self.visit(tree.children[1]) #revaulate the condition after update
         self.sTable.removeScope()
@@ -203,9 +256,7 @@ class EmojiLangInterpeter(Interpreter):
         return
 
     def flow_stmt(self, tree: Tree):
-        # print(tree.pretty(), tree.children[0].data)
         return 'break' if tree.children[0].data == 'break_stmt' else 'continue'
-        #this could be 'break' or 'continue' only
             
 
 

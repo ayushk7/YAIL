@@ -1,0 +1,17 @@
+#program to calcualate 
+#and print the prime numbers
+#between the given the range [start, end]
+
+decl start = 2, end = 100
+for(decl n=start; n <=end; n = n+1){
+    decl flag = true
+    for(decl i=n-1; i > 1; i = i - 1){
+        if (n mod i == 0){
+            flag = false
+            break
+        }
+    }
+    if(flag){
+        print(n)
+    }
+}

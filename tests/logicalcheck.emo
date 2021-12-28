@@ -1,4 +1,5 @@
-a=5
-b=6
-c=8
-d=!a && b||c
+decl a=5
+decl b=6
+decl c=8
+decl d=!a && b||c
+print(d)
