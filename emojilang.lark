@@ -34,17 +34,32 @@ _multipleassignment_stmt: assignment_stmt ("," assignment_stmt)?
 
 suite: (_simple_stmt | _compound_stmt)* NEWLINE
 
-exp: (multiplyexp|logicalexpr) ((EMULT|EDIVIDE|EMOD) (multiplyexp|logicalexpr))*
 
-multiplyexp: (_argument|logicalexpr) ((EPLUS|EMINUS) (_argument|logicalexpr))*
 
-logicalexpr: logicalexpr binarylogicalop logicalexpr 
-              | unarylogicalop logicalexpr
-              | "(" logicalexpr ")"|exp
 
-binarylogicalop: EAND|EOR
+castexpression: (unaryoperator?)_argument
 
-unarylogicalop: ENOT
+multiplyexp: castexpression ((EMULT|EDIVIDE|EMOD) castexpression)*
+
+additiveexpression: multiplyexp ((EPLUS|EMINUS) multiplyexp)*
+
+equalityexpression: additiveexpression ((EEQU|ENOTEQ) additiveexpression)*
+
+andexpression: equalityexpression ((EAND) equalityexpression)*
+
+exclusiveorexpression: andexpression ((EXOR) andexpression)*
+
+inclusiveorexpression: exclusiveorexpression ((EOR) exclusiveorexpression)*
+
+logicalandexpression: inclusiveorexpression ((ELAND) inclusiveorexpression)*
+
+logicalorexpression: logicalandexpression ((ELOR) logicalandexpression)*
+
+exp: logicalorexpression
+
+unaryoperator: (ENOT|ECOMPLEMENT)
+
+
 
 
 test: exp (_comp_op exp)*
@@ -76,13 +91,16 @@ EGREAE: ">="
 ELESSE: "<="
 ENOTEQ: "!="|"is not"
 
-EAND: "and"|"&&"
-EOR: "or"|"||"
+EAND: "&"
+EOR: "|"
 EXOR: "xor"|"^"
 ENOT: "not"|"!"
 EIN: "in"|"<-"
 ENOTIN: "not in"|"<->"
 EMOD: "%"| "mod"
+ELOR: "or"|"||"
+ELAND: "and"|"&&"
+ECOMPLEMENT: "~"
 
 
 %ignore WS
