@@ -1,6 +1,8 @@
 # emojilang
 Programming language where you can code using emojis 😌
 
+### See fork https://github.com/grininja/emojilang for complete project
+
 #### To install dependencies
 ```bash
 pip install -r requirements.txt
