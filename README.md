@@ -1,14 +1,14 @@
-# emojilang
-Programming language where you can code using emojis 😌
+# YAIL
+Yet Another Interpreted Language
 
-### See fork https://github.com/grininja/emojilang for complete project
+### See fork https://github.com/grininja/emojilang to find the emoji version of this.
 
 #### To install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Current Syntax
+### Syntax
 
 #### Operators
 |Operation | Symbol|
